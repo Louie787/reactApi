@@ -10,12 +10,7 @@ const {DEXrootContract} = require('./../DEXroot');
 const {DEXclientContract} = require('./../DEXclient');
 
 function checkExtensionAvailability() {
-    if (window.freeton === undefined) {
-        console.log("no extraton extension")
-        return false
-    }
-    return true
-
+    return window.freeton !== undefined;
 }
 
 export async function checkExtensions() {
@@ -51,7 +46,6 @@ export async function getCurrentExtension(extensionsArry) {
     if (curExtension.length > 1) {
         return curExtension[0]
     }
-    console.log(curExtension[0])
     return curExtension[0]
 }
 
@@ -62,7 +56,6 @@ async function extraton() {
     const signer = await provider.getSigner();
 
     let curExtenson = {};
-    console.log("provider", provider, "signer", signer)
     curExtenson.name = "extraton";
     curExtenson.address = signer.wallet.address;
     curExtenson.pubkey = await signer.getPublicKey();
@@ -86,17 +79,14 @@ function getProvider() {
 
 
 async function broxus() {
-    console.log("i am at broxus1")
+
     await ton.ensureInitialized();
-    console.log("i am at broxus2")
     const {accountInteraction} = await ton.api.requestPermissions({
         permissions: ['tonClient', 'accountInteraction']
     });
-    console.log("i am at broxus3")
     if (accountInteraction == null) {
         return new Error('Insufficient permissions');
     }
-    console.log("i am at broxus4")
     let curExtenson = {};
 
     curExtenson.name = "broxus";
@@ -109,43 +99,16 @@ async function broxus() {
         return await contract.methods[methodName](params).call({cachedState: undefined})
     };
     curExtenson.callMethod = async (methodName, params, contract) => {
-        return await contract.methods[methodName](params).sendExternal({publicKey: accountInteraction.publicKey})
+        return await contract.methods[methodName](params).sendExternal({publicKey: accountInteraction.publicKey}).catch(e=>console.log(e))
     };
     curExtenson.internal = async (methodName, params, contract) => {
-        console.log("contract",contract)
         return await contract.methods[methodName](params).send({
-            from: new Address("0:024d40e511ca53446dd80e48762325955b11f16f22ad15013a8cbf009515ef77"),
-            amount: "1000000000",
+            from: new Address(curExtenson.address),
+            amount: "10000000000",
             bounce: false
         })
     };
     return curExtenson
 }
-
-
-// export async function test() {
-//     if (!(await hasTonProvider())) {
-//         return;
-//     }
-//     await ton.ensureInitialized();
-//
-//     const { accountInteraction } = await ton.api.requestPermissions({
-//         permissions: ['tonClient', 'accountInteraction']
-//     });
-//     if (accountInteraction == null) {
-//         throw new Error('Insufficient permissions');
-//     }
-//
-//     const myContract = new Contract(DEXrootContract.abi, new AddressLiteral('0:2b31415e2b6cf0b4f9e6defe887cf84357ccc4cdd909d0ae04d8968603b754d0'));
-// console.log("myContract",myContract)
-//
-//         await myContract.methods.checkPubKey({
-//             pubkey: "0x" + accountInteraction.publicKey
-//     }).call({
-//         cachedState: undefined // can be used to reduce network requests
-//     }).then(res=>console.log("res",res));
-// }
-
-
 
 

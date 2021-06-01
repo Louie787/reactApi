@@ -12,7 +12,7 @@ import BigNumber from "bignumber.js";
 import {HelloContract} from "./HelloContract";
 import { useState } from "react"
 import { checkExtensions, test,getCurrentExtension } from "./extensions/checkExtensions"
-import { getWalletData,getPairReserves,checkPubKey, getPairClientWallets,getAllDataPreparation,showContractAddress,pairKeys,getDexClientData,x,getRootData,getClientData,createDEXclient,connectToPair,onSharding,getGiverAddress} from "./sdk/run"
+import { setCreator,getWalletData,getPairReserves,checkPubKey, getPairClientWallets,getAllDataPreparation,showContractAddress,pairKeys,getDexClientData,x,getRootData,getClientData,createDEXclient,connectToPair,onSharding,getGiverAddress} from "./sdk/run"
 
 // async function checkExtension() {
 //
@@ -177,6 +177,9 @@ function App() {
     async function clickMe9() {
         let y = getWalletData()
     }
+    async function clickMe10() {
+        let y = setCreator()
+    }
 
   return (
       <div className="App">
@@ -254,6 +257,16 @@ function App() {
               onClick={()=>clickMe9()}>
               getWalletData
           </button>
+          <button
+              style={{
+                  "width": "500px",
+                  "height": "200px",
+              }}
+              onClick={()=>clickMe10()}>
+              setCreator
+          </button>
+
+
       </div>
   );
 }

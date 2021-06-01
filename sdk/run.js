@@ -15,6 +15,10 @@ const Radiance = require('../Radiance.json');
     deploy new client
 */
 
+function UserException(message) {
+    this.message = message;
+    this.name = "UserExeption";
+}
 
 function getShard(string) {
     return string[2];
@@ -60,12 +64,12 @@ export async function onSharding() {
         }
     } catch (e) {
         console.log("catch E", e);
+        return e
     }
 }
 
-
 // 0:3e0b005781c00c4ace572ea9b06ff094ac3f0d1572d40f10b973492f48fd1b0f
-export async function createDEXclient(shardData) {
+export async function setCreator() {
     let curExt = {};
     await checkExtensions().then(async res => curExt = await getCurrentExtension(res))
     const {name, address, pubkey, contract, runMethod, callMethod, internal} = curExt._extLib
@@ -74,17 +78,43 @@ export async function createDEXclient(shardData) {
     // console.log("shardData", shardData)
     try {
         let resp = {};
-        console.log("shardData.clientSoArg",shardData.clientSoArg, typeof shardData.clientSoArg)
+console.log("setCreator",address)
         const rootContract = await contract(DEXrootContract.abi, Radiance.networks['2'].dexroot);
-        console.log("rootContract",rootContract)
-        let deployresp = await callMethod("createDEXclient", {pubkey: shardData.keys,souint:shardData.clientSoArg}, rootContract).then(res => {
+        let deployresp = await callMethod("setCreator", {giverAddr: address}, rootContract).then(res => {
             resp = res;
             console.log("res",res)
         }).catch(e=>console.log(e));
-    console.log("deployresp",deployresp)
+        console.log("deployresp",deployresp)
         return resp
     } catch (e) {
         console.log("catch E", e);
+        return e
+    }
+}
+
+
+export async function createDEXclient(shardData) {
+    let curExt = {};
+    await checkExtensions().then(async res => curExt = await getCurrentExtension(res))
+    const {name, address, pubkey, contract, runMethod, callMethod, internal} = curExt._extLib
+
+    // const shardData = onSharding()
+    // console.log("shardData", shardData)
+    try {
+        // let resp = {};
+        const rootContract = await contract(DEXrootContract.abi, Radiance.networks['2'].dexroot);
+        // console.log("shardData.keys",shardData.keys, "shardData.clientSoArg",shardData.clientSoArg, "rootContract",rootContract)
+        let deployresp = await callMethod("createDEXclient", {pubkey: shardData.keys,souint:shardData.clientSoArg}, rootContract).catch(e=>console.log(e))
+        //     .then(res => {
+        //     resp = res;
+        //
+        // }).catch(e=>console.log(e));
+
+    console.log("deployresp",deployresp)
+        // return resp
+    } catch (e) {
+        console.log("catch E", e);
+        return e
     }
 }
 
@@ -94,18 +124,12 @@ export async function checkPubKey() {
     await checkExtensions().then(async res => curExt = await getCurrentExtension(res))
     const {name, address, pubkey, contract, runMethod, callMethod} = curExt._extLib
     try {
-        let resp = {};
         const rootContract = await contract(DEXrootContract.abi, Radiance.networks['2'].dexroot);
-
         let checkPubKey = await runMethod("checkPubKey", {pubkey:"0x"+pubkey}, rootContract)
-
-        console.log( "checkPubKey",checkPubKey)
         return checkPubKey
-        // console.log("getBalanceTONgrams",getBalanceTONgrams)
-
     } catch (e) {
-
         console.log("catch E", e);
+        return e
     }
 }
 
@@ -125,8 +149,8 @@ export async function getGiverAddress() {
         // console.log("getBalanceTONgrams",getBalanceTONgrams)
 
     } catch (e) {
-
         console.log("catch E", e);
+        return e
     }
 }
 
@@ -140,6 +164,7 @@ export async function getRootData() {
         let resp = {};
         const rootContract = await contract(DEXrootContract.abi, Radiance.networks['2'].dexroot);
 
+        let creators = await runMethod("creators", {}, rootContract)
         let getBalanceTONgrams = await runMethod("getBalanceTONgrams", {}, rootContract)
         let balanceOf = await runMethod("balanceOf", {}, rootContract)
         let pubkeys = await runMethod("pubkeys", {}, rootContract)
@@ -147,26 +172,25 @@ export async function getRootData() {
         let pairKeys = await runMethod("pairKeys", {}, rootContract)
         let clients = await runMethod("clients", {}, rootContract)
         let clientKeys = await runMethod("clientKeys", {}, rootContract)
-console.log( {...getBalanceTONgrams,...balanceOf,...pubkeys,...pairs,...pairKeys,...clients,...clientKeys})
-        return {...getBalanceTONgrams,...balanceOf,...pubkeys,...pairs,...pairKeys,...clients,...clientKeys}
+console.log( {...creators,...getBalanceTONgrams,...balanceOf,...pubkeys,...pairs,...pairKeys,...clients,...clientKeys})
+        return {...creators,...getBalanceTONgrams,...balanceOf,...pubkeys,...pairs,...pairKeys,...clients,...clientKeys}
         // console.log("getBalanceTONgrams",getBalanceTONgrams)
 
     } catch (e) {
-
         console.log("catch E", e);
+        return e
     }
 }
 export async function getClientData() {
     let curExt = {};
     await checkExtensions().then(async res => curExt = await getCurrentExtension(res))
     const {name, address, pubkey, contract, runMethod, callMethod} = curExt._extLib
-    console.log("address",address)
-
-
+    let getClientAddressFromRoot = await checkPubKey()
+    if(getClientAddressFromRoot.status === false){
+        return getClientAddressFromRoot
+    }
     try {
-        let resp = {};
-        //todo check address
-        const clientContract = await contract(DEXclientContract.abi, "0:3faf8b711558183290d3ad0a1a9860423e2432a049086075fe432eed2bf1f9d0");
+        const clientContract = await contract(DEXclientContract.abi, getClientAddressFromRoot.dexclient);
         let soUINT = await runMethod("soUINT", {}, clientContract)
         let rootConnector = await runMethod("rootConnector", {}, clientContract)
         let rootDEX = await runMethod("rootDEX", {}, clientContract)
@@ -179,7 +203,8 @@ export async function getClientData() {
         return {...soUINT,...rootConnector,...rootDEX,...pairs,...rootWallet,...getAllDataPreparation,...counterCallback}
     } catch (e) {
         console.log("catch E", e);
-    }
+        return e
+   }
 }
 
 let pairDa = {
@@ -206,6 +231,7 @@ console.log("balanceA",balanceA,balanceB)
         return {balanceA,balanceB}
     } catch (e) {
         console.log("catch E", e);
+        return e
     }
 }
 
@@ -227,6 +253,7 @@ export async function getWalletData() {
         return {detailsA,detailsB}
     } catch (e) {
         console.log("catch E", e);
+        return e
     }
 }
 /*
@@ -236,21 +263,24 @@ export async function connectToPair(pairAddr) {
     let curExt = {};
     await checkExtensions().then(async res => curExt = await getCurrentExtension(res))
     const {name, address, pubkey, contract, runMethod, callMethod, internal} = curExt._extLib
-    console.log("address",address)
+    let getClientAddressFromRoot = await checkPubKey()
+    if(getClientAddressFromRoot.status === false){
+        return getClientAddressFromRoot
+    }
     try {
         let resp = {};
         //todo check address
-        const clientContract = await contract(DEXclientContract.abi, address);
+        const clientContract = await contract(DEXclientContract.abi, getClientAddressFromRoot.dexclient);
 
         let statusOfConnection = await callMethod("connectPair", {
-            pairAddr: pairAddr,
+            pairAddr: "0:74b3396166b5b620b560c8c298846ea95010f53985d80c1fab81c847c2971886",
         }, clientContract)
 
         console.log("statusOfConnection",statusOfConnection)
 
     } catch (e) {
-
         console.log("catch E", e);
+        return e
     }
 }
 
