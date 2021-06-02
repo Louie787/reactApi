@@ -12,7 +12,7 @@ import BigNumber from "bignumber.js";
 import {HelloContract} from "./HelloContract";
 import { useState } from "react"
 import { checkExtensions, test,getCurrentExtension } from "./extensions/checkExtensions"
-import { setCreator,getWalletData,getPairReserves,checkPubKey, getPairClientWallets,getAllDataPreparation,showContractAddress,pairKeys,getDexClientData,x,getRootData,getClientData,createDEXclient,connectToPair,onSharding,getGiverAddress} from "./sdk/run"
+import { transfer,setCreator,connectToPairStep2DeployWallets,getPairReserves,checkPubKey, getAllPairs,getAllDataPreparation,showContractAddress,pairKeys,getDexClientData,x,getRootData,getClientData,createDEXclient,connectToPair,onSharding,getGiverAddress} from "./sdk/run"
 
 // async function checkExtension() {
 //
@@ -160,7 +160,7 @@ function App() {
         let y = checkPubKey()
     }
     async function clickMe4() {
-        let y = createDEXclient()
+        let y = connectToPairStep2DeployWallets()
     }
     async function clickMe5() {
         let y = connectToPair()
@@ -175,11 +175,15 @@ function App() {
         let y = getPairReserves()
     }
     async function clickMe9() {
-        let y = getWalletData()
+        let y = getAllPairs()
     }
     async function clickMe10() {
         let y = setCreator()
     }
+    async function clickMe11() {
+        let y = transfer()
+    }
+
 
   return (
       <div className="App">
@@ -213,7 +217,7 @@ function App() {
                   "height": "200px",
               }}
               onClick={()=>clickMe4()}>
-              createDEXclient
+              connectToPairStep2DeployWallets
           </button>
 
           <button
@@ -255,7 +259,7 @@ function App() {
                   "height": "200px",
               }}
               onClick={()=>clickMe9()}>
-              getWalletData
+              getAllPairs
           </button>
           <button
               style={{
@@ -263,10 +267,17 @@ function App() {
                   "height": "200px",
               }}
               onClick={()=>clickMe10()}>
-              setCreator
+              create dex client
           </button>
 
-
+          <button
+              style={{
+                  "width": "500px",
+                  "height": "200px",
+              }}
+              onClick={()=>clickMe11()}>
+              transfer
+          </button>
       </div>
   );
 }
