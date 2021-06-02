@@ -318,7 +318,7 @@ export async function swapA(pairAddr, qtyA) {
 }
 
 
-export async function swapB(pairAddr, qtyA) {
+export async function swapB(pairAddr, qtyB) {
     let curExt = {};
     await checkExtensions().then(async res => curExt = await getCurrentExtension(res))
     const {name, address, pubkey, contract, runMethod, callMethod} = curExt._extLib
@@ -329,7 +329,7 @@ export async function swapB(pairAddr, qtyA) {
     try {
         let resp = {};
         const clientContract = await contract(DEXclientContract.abi, getClientAddressFromRoot.dexclient);
-        const processSwapA = await callMethod("processSwapB", {pairAddr:pairAddr, qtyA:qtyA}, clientContract).then(res => {
+        const processSwapA = await callMethod("processSwapB", {pairAddr:pairAddr, qtyA:qtyB}, clientContract).then(res => {
             resp = res;
             console.log("res",res)
         }).catch(e=>console.log(e));
