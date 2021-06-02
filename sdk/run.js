@@ -253,23 +253,29 @@ export async function getAllPairs() {
             let itemData = {};
             itemData.pairAddress = item[0];
             itemData.pairName = hex2a(curRootDataAB.value0.name)
-            itemData.rootA = {}
-            itemData.rootA.rootAaddress = item[1].root0
-            itemData.rootA.name = hex2a(curRootDataA.value0.name)
-            itemData.rootA.symbol = hex2a(curRootDataA.value0.symbol)
-            itemData.rootA.decimals = curRootDataA.value0.decimals
 
-            itemData.rootB = {}
-            itemData.rootB.rootBaddress = item[1].root1
-            itemData.rootB.name = hex2a(curRootDataB.value0.name)
-            itemData.rootB.symbol = hex2a(curRootDataB.value0.symbol)
-            itemData.rootB.decimals = curRootDataB.value0.decimals
 
-            itemData.rootAB = {}
-            itemData.rootAB.rootABaddress = item[1].rootLP
-            itemData.rootAB.name = hex2a(curRootDataAB.value0.name)
-            itemData.rootAB.symbol = hex2a(curRootDataAB.value0.symbol)
-            itemData.rootAB.decimals = curRootDataAB.value0.decimals
+            itemData.tokenA = hex2a(curRootDataA.value0.name)
+            itemData.tokenB = hex2a(curRootDataB.value0.name)
+
+            // itemData.rootA = {}
+            // itemData.rootA.rootAaddress = item[1].root0
+            // itemData.rootA.name = hex2a(curRootDataA.value0.name)
+            // itemData.rootA.symbol = hex2a(curRootDataA.value0.symbol)
+            // itemData.rootA.decimals = curRootDataA.value0.decimals
+            //
+            // itemData.rootB = {}
+            //
+            // itemData.rootB.rootBaddress = item[1].root1
+            // itemData.rootB.name = hex2a(curRootDataB.value0.name)
+            // itemData.rootB.symbol = hex2a(curRootDataB.value0.symbol)
+            // itemData.rootB.decimals = curRootDataB.value0.decimals
+            //
+            // itemData.rootAB = {}
+            // itemData.rootAB.rootABaddress = item[1].rootLP
+            // itemData.rootAB.name = hex2a(curRootDataAB.value0.name)
+            // itemData.rootAB.symbol = hex2a(curRootDataAB.value0.symbol)
+            // itemData.rootAB.decimals = curRootDataAB.value0.decimals
 
 
             // console.log("normlizeWallets",normlizeWallets)
