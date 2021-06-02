@@ -294,6 +294,18 @@ export async function getAllPairs() {
         return e
     }
 }
+// balanceA {value0: "13238370"}
+// run.js:448 balanceA {value0: "182355966"}
+// run.js:448 balanceA {value0: "366730233240"}
+// run.js:448 balanceA {value0: "500000000000"}
+// run.js:448 balanceA {value0: "0"}
+// run.js:448 balanceA {value0: "26688729349"}value0: "26688729349"__proto__: Object
+// run.js:448 balanceA {value0: "0"}
+// run.js:448 balanceA {value0: "26688729350"}
+// run.js:448 balanceA {value0: "500000000000"}
+// run.js:448 balanceA {value0: "0"}
+// run.js:448 balanceA {value0: "0"}
+
 export async function swapA(pairAddr, qtyA) {
     let curExt = {};
     await checkExtensions().then(async res => curExt = await getCurrentExtension(res))
@@ -329,7 +341,7 @@ export async function swapB(pairAddr, qtyB) {
     try {
         let resp = {};
         const clientContract = await contract(DEXclientContract.abi, getClientAddressFromRoot.dexclient);
-        const processSwapA = await callMethod("processSwapB", {pairAddr:pairAddr, qtyA:qtyB}, clientContract).then(res => {
+        const processSwapA = await callMethod("processSwapB", {pairAddr:pairAddr, qtyB:qtyB}, clientContract).then(res => {
             resp = res;
             console.log("res",res)
         }).catch(e=>console.log(e));
@@ -425,6 +437,16 @@ console.log("balanceA",balanceA,"balanceB",balanceB)
         return e
     }
 }
+
+
+
+export async function getval() {
+    let wallets = ["0:7e0457591e59add970bfa95c87d8b1d6c13e0677411c93c057a1706184e9b6ab","0:7823d7b9083c54a9176509b294386f020106dc6e53e77970d6726d7da97bc857"]
+
+    wallets.map(item=>console.log(getWalletBalance(item)))
+}
+
+
 export async function getWalletBalance(walletAddress) {
     let curExt = {};
     await checkExtensions().then(async res => curExt = await getCurrentExtension(res))
@@ -433,10 +455,7 @@ export async function getWalletBalance(walletAddress) {
         const wallet = await contract(TONTokenWalletContract.abi, walletAddress);
         let balance = await runMethod("balance", {_answer_id:0}, wallet).catch(e=>console.log(e))
 
-
-        console.log("balanceA",balance)
-
-
+        console.log("balance",balance)
         return balance
     } catch (e) {
         console.log("catch E", e);

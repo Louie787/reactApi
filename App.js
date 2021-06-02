@@ -12,7 +12,7 @@ import BigNumber from "bignumber.js";
 import {HelloContract} from "./HelloContract";
 import { useState } from "react"
 import { checkExtensions, test,getCurrentExtension } from "./extensions/checkExtensions"
-import { transfer,setCreator,connectToPairStep2DeployWallets,getPairReserves,checkPubKey, getAllPairs,getAllDataPreparation,showContractAddress,pairKeys,getDexClientData,x,getRootData,getClientData,createDEXclient,connectToPair,onSharding,getGiverAddress} from "./sdk/run"
+import { swapB, swapA,setCreator,connectToPairStep2DeployWallets,getPairReserves,checkPubKey, getAllPairs,getval,showContractAddress,pairKeys,getDexClientData,x,getRootData,getClientData,createDEXclient,connectToPair,onSharding,getGiverAddress} from "./sdk/run"
 
 // async function checkExtension() {
 //
@@ -169,8 +169,9 @@ function App() {
         let y = onSharding()
     }
     async function clickMe7() {
-        let y = getGiverAddress()
+        let y = swapA()
     }
+
     async function clickMe8() {
         let y = getPairReserves()
     }
@@ -181,9 +182,11 @@ function App() {
         let y = setCreator()
     }
     async function clickMe11() {
-        let y = transfer()
+        let y = getval()
     }
-
+    async function clickMe12() {
+        let y = swapB()
+    }
 
   return (
       <div className="App">
@@ -243,7 +246,7 @@ function App() {
                   "height": "200px",
               }}
               onClick={()=>clickMe7()}>
-              getGiverAddress
+              swapA
           </button>
           <button
               style={{
@@ -276,8 +279,18 @@ function App() {
                   "height": "200px",
               }}
               onClick={()=>clickMe11()}>
-              transfer
+              getval
           </button>
+          <button
+              style={{
+                  "width": "500px",
+                  "height": "200px",
+              }}
+              onClick={()=>clickMe12()}>
+              swapB
+          </button>
+
+
       </div>
   );
 }
