@@ -239,11 +239,9 @@ export async function getAllPairs() {
     await checkExtensions().then(async res => curExt = await getCurrentExtension(res))
     const {name, address, pubkey, contract, runMethod, callMethod} = curExt._extLib
     try {
-        let resp = {};
         const rootContract = await contract(DEXrootContract.abi, Radiance.networks['2'].dexroot);
         let pairsAll = await runMethod("pairs", {}, rootContract)
         let { pairs } = pairsAll
-        console.log("pairs", pairs)
         let normlizeWallets = []
         for (const item of Object.entries(pairs)) {
             const curRootTokenA = await contract(RootTokenContract.abi, item[1].root0);
@@ -279,7 +277,7 @@ export async function getAllPairs() {
         }
 
         console.log("normlizeWallets",normlizeWallets)
-        return pairs
+        return normlizeWallets
 
 
     } catch (e) {
