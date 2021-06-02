@@ -419,7 +419,25 @@ export async function getPairReserves(walletAadrress, walletBaddress) {
 console.log("balanceA",balanceA,"balanceB",balanceB)
 
 
-        // return {balanceA,balanceB}
+        return {balanceA,balanceB}
+    } catch (e) {
+        console.log("catch E", e);
+        return e
+    }
+}
+export async function getWalletBalance(walletAddress) {
+    let curExt = {};
+    await checkExtensions().then(async res => curExt = await getCurrentExtension(res))
+    const {name, address, pubkey, contract, runMethod, callMethod} = curExt._extLib
+    try {
+        const wallet = await contract(TONTokenWalletContract.abi, walletAddress);
+        let balance = await runMethod("balance", {_answer_id:0}, wallet).catch(e=>console.log(e))
+
+
+        console.log("balanceA",balance)
+
+
+        return balance
     } catch (e) {
         console.log("catch E", e);
         return e
