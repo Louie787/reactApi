@@ -13,7 +13,7 @@ import {HelloContract} from "./HelloContract";
 import { useState } from "react"
 import { checkExtensions, test,getCurrentExtension } from "./extensions/checkExtensions"
 import { swapB, getAllExistingPairs,swapA,setCreator,connectToPairStep2DeployWallets,getPairReserves,checkPubKey, getAllPairs,getval,getAllClientWallets,pairKeys,getDexClientData,x,getRootData,createDEXclient,connectToPair,onSharding,getGiverAddress} from "./sdk/run"
-import { subscribe,subscribeAll,getClientBalance } from "./webhook/script"
+import { subscribe,subscribeAll,getClientBalance,сheckLibWeb } from "./webhook/script"
 
 // async function checkExtension() {
 //
@@ -186,7 +186,7 @@ function App() {
         let y = getval()
     }
     async function clickMe12() {
-        let y = swapB()
+        let y = сheckLibWeb()
     }
     async function clickMe13() {
         let y = getClientBalance()
@@ -298,7 +298,7 @@ function App() {
                   "height": "200px",
               }}
               onClick={()=>clickMe12()}>
-              swapB
+              сheckLibWeb
           </button>
 
           <button

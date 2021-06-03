@@ -412,7 +412,8 @@ export async function getAllExistingPairs() {
     //TODO get contract and runmetod from global??
     let curExt = {};
     await checkExtensions().then(async res => curExt = await getCurrentExtension(res))
-    const {name, address, pubkey, contract, runMethod, callMethod} = curExt._extLib
+    console.log("curExt",curExt)
+    const {contract, runMethod} = curExt._extLib
     // let getClientAddressFromRoot = await checkPubKey()
     // if(getClientAddressFromRoot.status === false){
     //     return getClientAddressFromRoot
@@ -420,32 +421,31 @@ export async function getAllExistingPairs() {
 //TODO get from global store client address
 //     let clientAddress = "0:7d0f794a34e1645ab920f5737d19435415dd07331f02eb02b7bc41727448da43"
     try {
-        const clientContract = await contract(DEXclientContract.abi, "0:7d0f794a34e1645ab920f5737d19435415dd07331f02eb02b7bc41727448da43");
-        let pairs = await runMethod("pairs", {}, clientContract)
+        const rootContract = await contract(DEXrootContract.abi, Radiance.networks['2'].dexroot);
+        let pairs = await runMethod("pairs", {}, rootContract)
 
-let normlizeWallets = []
+        let normlizeWallets = []
         for (const item of Object.entries(pairs.pairs)) {
-            const curRootTokenA = await contract(RootTokenContract.abi, item[1].rootA);
-            const curRootTokenB = await contract(RootTokenContract.abi, item[1].rootB);
-            const curRootTokenAB = await contract(RootTokenContract.abi, item[1].rootAB);
+            // console.log("pairs.pairs",item)
+            const curRootTokenA = await contract(RootTokenContract.abi, item[1].root0);
+            const curRootTokenB = await contract(RootTokenContract.abi, item[1].root1);
+            const curRootTokenAB = await contract(RootTokenContract.abi, item[1].rootLP);
+            const pairContract = await contract(DEXPairContract.abi, item[0]);
+
+            let bal = await runMethod("balanceReserve", {}, pairContract)
+
             let curRootDataA = await runMethod("getDetails", {_answer_id:0}, curRootTokenA)
             let curRootDataB = await runMethod("getDetails", {_answer_id:0}, curRootTokenB)
             let curRootDataAB = await runMethod("getDetails", {_answer_id:0}, curRootTokenAB)
+
             let itemData = {};
             itemData.pairAddress = item[0];
             itemData.pairname = hex2a(curRootDataAB.value0.name)
+            itemData.nameWalletA = hex2a(curRootDataA.value0.name)
+            itemData.balanceWalletA = bal.balanceReserve[item[1].root0]
 
-            const walletA = await contract(TONTokenWalletContract.abi, item[1].walletA);
-            let curA = await runMethod("getDetails", {_answer_id:0}, walletA)
-
-            itemData.reservesAbalance = curA.value0.balance
-            itemData.reservesWalletAname = hex2a(curRootDataA.value0.name)
-
-            const walletB = await contract(TONTokenWalletContract.abi, item[1].walletB);
-            let curB = await runMethod("getDetails", {_answer_id:0}, walletB)
-
-            itemData.reservesWalletBname = curB.value0.balance
-            itemData.reservesBname = hex2a(curRootDataB.value0.name)
+            itemData.nameWalletB = hex2a(curRootDataB.value0.name)
+            itemData.balanceWalletB = bal.balanceReserve[item[1].root1]
 
             normlizeWallets.push(itemData)
         }

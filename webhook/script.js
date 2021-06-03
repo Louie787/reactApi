@@ -4,6 +4,7 @@ const {
     MessageBodyType,
     TonClient,
 } = require("@tonclient/core");
+const { Account } = require("@tonclient/appkit");
 TonClient.useBinaryLibrary(libWeb);
 const DappServer = "net.ton.dev"
 const client = new TonClient({ network: { endpoints: [DappServer] } });
@@ -20,6 +21,50 @@ import {abiContract} from "@tonclient/core";
 import {getWalletBalance} from "../sdk/run";
 import {checkExtensions, getCurrentExtension} from "../extensions/checkExtensions";
 
+function hex2a(hex) {
+    let str = '';
+    for (let i = 0; i < hex.length; i += 2) {
+        let v = parseInt(hex.substr(i, 2), 16);
+        if (v) str += String.fromCharCode(v);
+    }
+    return str;
+}
+export async function сheckLibWeb() {
+    const acc = new Account(DEXrootContract, {address: "0:74a70fecf38874f6b6e131df9aa1099d8ed3046312f233cb36aba5f6fb2513ff", client});
+    const response = await acc.runLocal("pairs", {});
+
+    let normlizeWallets = []
+    console.log("response",response.decoded.output)
+
+    for (const item of Object.entries(response.decoded.output.pairs)) {
+        console.log("item",item)
+        const curRootTokenA = new Account(RootTokenContract, {address: item[1].root0, client});
+        const curRootTokenB = new Account(RootTokenContract, {address: item[1].root1, client});
+        const curRootTokenAB = new Account(RootTokenContract, {address: item[1].rootLP, client});
+        const pairContract = new Account(DEXPairContract, {address: item[0], client});
+
+        let bal = await pairContract.runLocal("balanceReserve", {})
+
+        let curRootDataA = await curRootTokenA.runLocal("getDetails", {_answer_id:0})
+        let curRootDataB = await curRootTokenB.runLocal("getDetails", {_answer_id:0})
+        let curRootDataAB = await curRootTokenAB.runLocal("getDetails", {_answer_id:0})
+
+        let itemData = {};
+        itemData.pairAddress = item[0];
+        console.log("curRootDataAB",curRootDataAB)
+        itemData.pairname = hex2a(curRootDataAB.decoded.output.value0.name)
+        itemData.nameWalletA = hex2a(curRootDataA.decoded.output.value0.name)
+        itemData.balanceWalletA = bal.decoded.output.balanceReserve[item[1].root0]
+
+        itemData.nameWalletB = hex2a(curRootDataB.decoded.output.value0.name)
+        itemData.balanceWalletB = bal.decoded.output.balanceReserve[item[1].root1]
+
+        normlizeWallets.push(itemData)
+    }
+    console.log("{normlizeWallets}",normlizeWallets)
+    return normlizeWallets
+
+}
 
 
 
