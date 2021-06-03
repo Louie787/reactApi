@@ -180,6 +180,10 @@ export async function checkPubKey() {
     }
 }
 
+
+
+
+
 export async function getGiverAddress() {
     //put curExt to global store
     let curExt = {};
@@ -357,6 +361,50 @@ export async function swapB(pairAddr, qtyB) {
     }
 }
 
+
+export async function getAllClientWallets() {
+
+    //TODO get contract and runmetod from global??
+    let curExt = {};
+    await checkExtensions().then(async res => curExt = await getCurrentExtension(res))
+    const {name, address, pubkey, contract, runMethod, callMethod} = curExt._extLib
+
+
+    // let getClientAddressFromRoot = await checkPubKey()
+    // if(getClientAddressFromRoot.status === false){
+    //     return getClientAddressFromRoot
+    // }
+//TODO get from global store client address >>> if np client return - checkPubkey too low
+//     let clientAddress = "0:7d0f794a34e1645ab920f5737d19435415dd07331f02eb02b7bc41727448da43"
+    try {
+        const clientContract = await contract(DEXclientContract.abi, "0:7d0f794a34e1645ab920f5737d19435415dd07331f02eb02b7bc41727448da43");
+        let clientWallets = await runMethod("rootWallet", {}, clientContract)
+        let normlizeWallets = []
+        for (const item of Object.entries(clientWallets.rootWallet)) {
+
+            const curWalletContract = await contract(TONTokenWalletContract.abi, item[1]);
+            const curRootContract = await contract(RootTokenContract.abi, item[0]);
+
+            let curWalletData = await runMethod("getDetails", {_answer_id:0}, curWalletContract)
+            let curRootData = await runMethod("getDetails", {_answer_id:0}, curRootContract)
+            let itemData = {};
+
+            itemData.walletAddress = item;
+
+
+            itemData.name = hex2a(curRootData.value0.name);
+            itemData.balance = curWalletData.value0.balance;
+
+            normlizeWallets.push(itemData)
+
+    }
+        console.log("normlizeWallets",normlizeWallets)
+return normlizeWallets
+    } catch (e) {
+        console.log("catch E", e);
+        return e
+    }
+}
 
 
 export async function getAllExistingPairs() {

@@ -18,6 +18,33 @@ import {DEXPairContract} from "../contracts/DEXPairContract.js";
 
 import {abiContract} from "@tonclient/core";
 import {getWalletBalance} from "../sdk/run";
+import {checkExtensions, getCurrentExtension} from "../extensions/checkExtensions";
+
+
+
+
+
+
+export async function getClientBalance() {
+
+    let address = "0:7d0f794a34e1645ab920f5737d19435415dd07331f02eb02b7bc41727448da43"
+    try {
+        let clientBalance = await client.net.query_collection({
+            collection: "accounts",
+            filter: {
+                id: {
+                    eq: address,
+                },
+            },
+            result: "balance",
+        });
+
+        console.log("clientBalance",+clientBalance.result[0].balance)
+    } catch (e) {
+        console.log("catch E", e);
+        return e
+    }
+}
 
 const decode = {
     async message(abi, boc) {

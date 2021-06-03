@@ -12,8 +12,8 @@ import BigNumber from "bignumber.js";
 import {HelloContract} from "./HelloContract";
 import { useState } from "react"
 import { checkExtensions, test,getCurrentExtension } from "./extensions/checkExtensions"
-import { swapB, getAllExistingPairs,swapA,setCreator,connectToPairStep2DeployWallets,getPairReserves,checkPubKey, getAllPairs,getval,showContractAddress,pairKeys,getDexClientData,x,getRootData,createDEXclient,connectToPair,onSharding,getGiverAddress} from "./sdk/run"
-import { subscribe,subscribeAll } from "./webhook/script"
+import { swapB, getAllExistingPairs,swapA,setCreator,connectToPairStep2DeployWallets,getPairReserves,checkPubKey, getAllPairs,getval,getAllClientWallets,pairKeys,getDexClientData,x,getRootData,createDEXclient,connectToPair,onSharding,getGiverAddress} from "./sdk/run"
+import { subscribe,subscribeAll,getClientBalance } from "./webhook/script"
 
 // async function checkExtension() {
 //
@@ -147,11 +147,11 @@ import { subscribe,subscribeAll } from "./webhook/script"
 
 function App() {
 
-//   async function clickMe() {
-//       let y = getClientData()
-//       console.log("xxx",y)
-//
-// }
+  async function clickMe() {
+      let y = getAllClientWallets()
+      console.log("xxx",y)
+
+}
     async function clickMe2() {
         let y = getRootData()
         console.log("xxx",y)
@@ -189,7 +189,7 @@ function App() {
         let y = swapB()
     }
     async function clickMe13() {
-        let y = subscribe()
+        let y = getClientBalance()
     }
     async function clickMe14() {
         let y = subscribeAll()
@@ -201,14 +201,14 @@ function App() {
 
   return (
       <div className="App">
-        {/*<button*/}
-        {/*    style={{*/}
-        {/*  "width": "500px",*/}
-        {/*  "height": "200px",*/}
-        {/*     }}*/}
-        {/*        onClick={()=>clickMe()}>*/}
-        {/*    getclientData*/}
-        {/*</button>*/}
+        <button
+            style={{
+          "width": "500px",
+          "height": "200px",
+             }}
+                onClick={()=>clickMe()}>
+            getAllClientWallets
+        </button>
           <button
               style={{
                   "width": "500px",
@@ -307,7 +307,7 @@ function App() {
                   "height": "200px",
               }}
               onClick={()=>clickMe13()}>
-              subscribe
+              getClientBalance
           </button>
           <button
               style={{
