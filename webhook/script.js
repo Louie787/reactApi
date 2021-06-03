@@ -66,10 +66,6 @@ export async function getAllPairsWoithoutProvider() {
 
 }
 
-
-
-
-
 export async function getClientBalance() {
 
     let address = "0:7d0f794a34e1645ab920f5737d19435415dd07331f02eb02b7bc41727448da43"
@@ -108,18 +104,14 @@ const decode = {
     },
 }
 
-
+//TODO закидываем массив clientWallets
 export async function subscribeAll() {
-    let wallets = ["0:7e0457591e59add970bfa95c87d8b1d6c13e0677411c93c057a1706184e9b6ab","0:7823d7b9083c54a9176509b294386f020106dc6e53e77970d6726d7da97bc857"]
+    let wallets = ["0:7823d7b9083c54a9176509b294386f020106dc6e53e77970d6726d7da97bc857","0:7e0457591e59add970bfa95c87d8b1d6c13e0677411c93c057a1706184e9b6ab"]
     wallets.map(item=>subscribe(item))
-
-
-
 };
 
 
 export async function subscribe(address) {
-// let address = "0:7e0457591e59add970bfa95c87d8b1d6c13e0677411c93c057a1706184e9b6ab"
     let subscribeID = (await client.net.subscribe_collection({
         collection: "messages",
         filter: {
@@ -136,57 +128,37 @@ export async function subscribe(address) {
              if (decoded === 304) {decoded = await decode.message(SafeMultisigWallet.abi, params.result.boc)}
              if (decoded === 304) {decoded = await decode.message(DEXPairContract.abi, params.result.boc)}
              if (decoded === 304) {decoded = await decode.message(DEXclientContract.abi, params.result.boc)}
-//
-// console.log("params.result.id", params.result.id)
-// console.log("created_at_string", params.result.created_at)
+
              let resInput = decoded.value
-             let caseID = await checkMessagesAmount({transactionID:params.result.id, "created_at":params.result.created_at, amountOfTokens: resInput.tokens, grams:resInput.grams,})
-             console.log("caseID",caseID)
 
-
-                 await chek(caseID)
-
-
-
+             if(resInput.grams){
+                 console.log("skip message")
+             }else{
+                 let dataFromSu = {transactionID:params.result.id, "created_at":params.result.created_at, amountOfTokens: resInput.tokens, grams:resInput.grams,}
+                 let caseID = checkMessagesAmount({id:params.result.id, data:dataFromSu})
+                 if(caseID){
+                     checkerArr = [];
+//TODO get data from here
+                     console.log("ffffff",caseID)
+                 }
+             }
         }
     })).handle;
-    // await _db.saveSubscribeID({"subID":subscribeID,"address":address})
     console.log({"subID":subscribeID,"address":address})
-    // return {"status":"success", "subscribed address": address}
 }
-
-
-
 
 let checkerArr = [];
 let checkMessagesAmount = function(messageID){
     checkerArr.push(messageID)
+    // console.log("checkerArr at checkMessagesAmount",checkerArr)
     if(checkerArr.length === 2){
-        checkerArr.filter(function(item, pos) {
-            return checkerArr.indexOf(item) === pos;
-        })
-        // checkerArr.map(item=> {
-        //     return item.grams === 0
-        // })
-
-        // if(checkerArr[0] === checkerArr[1]){
-        //     checkerArr = [];
-        //     console.log("checkerArr[0]",checkerArr[0])
-        //     return checkerArr[0]
-        // }
+        if(checkerArr[0].id === checkerArr[1].id){
+            return checkerArr[0]
+        }else{
+            return checkerArr[0]
+        }
     }
-    console.log("checkerArr",checkerArr)
-    return null
-}
-let chek = function(messageID){
-    // console.log("messageID",messageID)
+    return false
 }
 
-// export async function unsubscribe(address) {
-//
-//
-//     let userData = await _db.unsubAtdb(address)
-//     await client.net.unsubscribe({ handle: userData.subscribeID });
-//     return {"status":"success", "subscribed address": address}
-// };
 

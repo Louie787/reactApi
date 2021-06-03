@@ -16,7 +16,7 @@ function checkExtensionAvailability() {
 export async function checkExtensions() {
     return [
         {
-            current: false,
+            current: true,
             name: "extraton",
             available: await checkExtensionAvailability(),
             link: "https://chrome.google.com/webstore/detail/extraton/hhimbkmlnofjdajamcojlcmgialocllm",

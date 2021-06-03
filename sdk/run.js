@@ -389,7 +389,7 @@ export async function getAllClientWallets() {
             let curRootData = await runMethod("getDetails", {_answer_id:0}, curRootContract)
             let itemData = {};
 
-            itemData.walletAddress = item;
+            itemData.walletAddress = item[1];
 
 
             itemData.name = hex2a(curRootData.value0.name);
@@ -485,7 +485,7 @@ console.log("balanceA",balanceA,"balanceB",balanceB)
 
 
 export async function getval() {
-    let wallets = ["0:7e0457591e59add970bfa95c87d8b1d6c13e0677411c93c057a1706184e9b6ab","0:7823d7b9083c54a9176509b294386f020106dc6e53e77970d6726d7da97bc857"]
+    let wallets = ["0:7823d7b9083c54a9176509b294386f020106dc6e53e77970d6726d7da97bc857","0:7e0457591e59add970bfa95c87d8b1d6c13e0677411c93c057a1706184e9b6ab"]
 
     wallets.map(item=>console.log(getWalletBalance(item)))
 }
