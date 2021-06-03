@@ -12,7 +12,8 @@ import BigNumber from "bignumber.js";
 import {HelloContract} from "./HelloContract";
 import { useState } from "react"
 import { checkExtensions, test,getCurrentExtension } from "./extensions/checkExtensions"
-import { swapB, swapA,setCreator,connectToPairStep2DeployWallets,getPairReserves,checkPubKey, getAllPairs,getval,showContractAddress,pairKeys,getDexClientData,x,getRootData,getClientData,createDEXclient,connectToPair,onSharding,getGiverAddress} from "./sdk/run"
+import { swapB, getAllExistingPairs,swapA,setCreator,connectToPairStep2DeployWallets,getPairReserves,checkPubKey, getAllPairs,getval,showContractAddress,pairKeys,getDexClientData,x,getRootData,createDEXclient,connectToPair,onSharding,getGiverAddress} from "./sdk/run"
+import { subscribe,subscribeAll } from "./webhook/script"
 
 // async function checkExtension() {
 //
@@ -146,11 +147,11 @@ import { swapB, swapA,setCreator,connectToPairStep2DeployWallets,getPairReserves
 
 function App() {
 
-  async function clickMe() {
-      let y = getClientData()
-      console.log("xxx",y)
-
-}
+//   async function clickMe() {
+//       let y = getClientData()
+//       console.log("xxx",y)
+//
+// }
     async function clickMe2() {
         let y = getRootData()
         console.log("xxx",y)
@@ -187,17 +188,27 @@ function App() {
     async function clickMe12() {
         let y = swapB()
     }
+    async function clickMe13() {
+        let y = subscribe()
+    }
+    async function clickMe14() {
+        let y = subscribeAll()
+    }
+    async function clickMe15() {
+        let y = getAllExistingPairs()
+    }
+
 
   return (
       <div className="App">
-        <button
-            style={{
-          "width": "500px",
-          "height": "200px",
-             }}
-                onClick={()=>clickMe()}>
-            getclientData
-        </button>
+        {/*<button*/}
+        {/*    style={{*/}
+        {/*  "width": "500px",*/}
+        {/*  "height": "200px",*/}
+        {/*     }}*/}
+        {/*        onClick={()=>clickMe()}>*/}
+        {/*    getclientData*/}
+        {/*</button>*/}
           <button
               style={{
                   "width": "500px",
@@ -290,6 +301,31 @@ function App() {
               swapB
           </button>
 
+          <button
+              style={{
+                  "width": "500px",
+                  "height": "200px",
+              }}
+              onClick={()=>clickMe13()}>
+              subscribe
+          </button>
+          <button
+              style={{
+                  "width": "500px",
+                  "height": "200px",
+              }}
+              onClick={()=>clickMe14()}>
+              subscribeAl
+          </button>
+
+          <button
+              style={{
+                  "width": "500px",
+                  "height": "200px",
+              }}
+              onClick={()=>clickMe15()}>
+              getAllExistingPairs
+          </button>
 
       </div>
   );

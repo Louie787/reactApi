@@ -261,6 +261,10 @@ export async function getAllPairs() {
             itemData.tokenA = hex2a(curRootDataA.value0.name)
             itemData.tokenB = hex2a(curRootDataB.value0.name)
 
+
+
+
+
             // itemData.rootA = {}
             // itemData.rootA.rootAaddress = item[1].root0
             // itemData.rootA.name = hex2a(curRootDataA.value0.name)
@@ -317,7 +321,7 @@ export async function swapA(pairAddr, qtyA) {
     try {
         let resp = {};
         const clientContract = await contract(DEXclientContract.abi, getClientAddressFromRoot.dexclient);
-        const processSwapA = await callMethod("processSwapA", {pairAddr:pairAddr, qtyA:qtyA}, clientContract).then(res => {
+        const processSwapA = await callMethod("processSwapA", {pairAddr:"0:7b8782447a56347d643a7d64d90efc4b07ad0e51f04088585eae6f4a8e966f68", qtyA:99999}, clientContract).then(res => {
             resp = res;
             console.log("res",res)
         }).catch(e=>console.log(e));
@@ -341,7 +345,7 @@ export async function swapB(pairAddr, qtyB) {
     try {
         let resp = {};
         const clientContract = await contract(DEXclientContract.abi, getClientAddressFromRoot.dexclient);
-        const processSwapA = await callMethod("processSwapB", {pairAddr:pairAddr, qtyB:qtyB}, clientContract).then(res => {
+        const processSwapA = await callMethod("processSwapB", {pairAddr:"0:7b8782447a56347d643a7d64d90efc4b07ad0e51f04088585eae6f4a8e966f68", qtyB:99999}, clientContract).then(res => {
             resp = res;
             console.log("res",res)
         }).catch(e=>console.log(e));
@@ -355,19 +359,20 @@ export async function swapB(pairAddr, qtyB) {
 
 
 
-export async function getClientData() {
+export async function getAllExistingPairs() {
+
+    //TODO get contract and runmetod from global??
     let curExt = {};
     await checkExtensions().then(async res => curExt = await getCurrentExtension(res))
     const {name, address, pubkey, contract, runMethod, callMethod} = curExt._extLib
-    let getClientAddressFromRoot = await checkPubKey()
-    if(getClientAddressFromRoot.status === false){
-        return getClientAddressFromRoot
-    }
+    // let getClientAddressFromRoot = await checkPubKey()
+    // if(getClientAddressFromRoot.status === false){
+    //     return getClientAddressFromRoot
+    // }
+//TODO get from global store client address
+//     let clientAddress = "0:7d0f794a34e1645ab920f5737d19435415dd07331f02eb02b7bc41727448da43"
     try {
-        const clientContract = await contract(DEXclientContract.abi, getClientAddressFromRoot.dexclient);
-        let soUINT = await runMethod("soUINT", {}, clientContract)
-        let rootConnector = await runMethod("rootConnector", {}, clientContract)
-        let rootDEX = await runMethod("rootDEX", {}, clientContract)
+        const clientContract = await contract(DEXclientContract.abi, "0:7d0f794a34e1645ab920f5737d19435415dd07331f02eb02b7bc41727448da43");
         let pairs = await runMethod("pairs", {}, clientContract)
 
 let normlizeWallets = []
@@ -380,33 +385,24 @@ let normlizeWallets = []
             let curRootDataAB = await runMethod("getDetails", {_answer_id:0}, curRootTokenAB)
             let itemData = {};
             itemData.pairAddress = item[0];
-            itemData.walletAaddress = item[1].walletA
-            let curA = await getWalletData(item[1].walletA)
-            itemData.walletA = curA.value0
-            itemData.walletA.name = curRootDataA.value0.name
-            itemData.walletA.symbol = curRootDataA.value0.symbol
-            itemData.walletA.decimals = curRootDataA.value0.decimals
-            itemData.walletBaddress = item[1].walletB
+            itemData.pairname = hex2a(curRootDataAB.value0.name)
 
-            let curB = await getWalletData(item[1].walletB)
-            itemData.walletB = curB.value0
-            itemData.walletB.name = curRootDataB.value0.name
-            itemData.walletB.symbol = curRootDataB.value0.symbol
-            itemData.walletB.decimals = curRootDataB.value0.decimals
-            itemData.rootAB = {}
-            itemData.rootAB.name = curRootDataAB.value0.name
-            itemData.rootAB.symbol = curRootDataAB.value0.symbol
-            itemData.rootAB.decimals = curRootDataAB.value0.decimals
+            const walletA = await contract(TONTokenWalletContract.abi, item[1].walletA);
+            let curA = await runMethod("getDetails", {_answer_id:0}, walletA)
 
+            itemData.reservesAbalance = curA.value0.balance
+            itemData.reservesWalletAname = hex2a(curRootDataA.value0.name)
+
+            const walletB = await contract(TONTokenWalletContract.abi, item[1].walletB);
+            let curB = await runMethod("getDetails", {_answer_id:0}, walletB)
+
+            itemData.reservesWalletBname = curB.value0.balance
+            itemData.reservesBname = hex2a(curRootDataB.value0.name)
 
             normlizeWallets.push(itemData)
         }
-        let rootWallet = await runMethod("rootWallet", {}, clientContract)
-        let getAllDataPreparation = await runMethod("getAllDataPreparation", {}, clientContract)
-        let counterCallback = await runMethod("counterCallback", {}, clientContract)
-
-        console.log( {normlizeWallets,...soUINT,...rootConnector,...rootDEX,...pairs,...rootWallet,...getAllDataPreparation,...counterCallback})
-        return {normlizeWallets,...soUINT,...rootConnector,...rootDEX,...pairs,...rootWallet,...getAllDataPreparation,...counterCallback}
+        console.log("{normlizeWallets}",normlizeWallets)
+        return normlizeWallets
     } catch (e) {
         console.log("catch E", e);
         return e
