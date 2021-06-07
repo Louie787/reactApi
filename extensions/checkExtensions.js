@@ -23,7 +23,7 @@ export async function checkExtensions() {
             logo: "./extratonIcon.png",
         },
         {
-            current: false,
+            current: true,
             name: "broxus",
             available: await hasTonProvider(),
             link: "https://chrome.google.com/webstore/detail/ton-crystal-wallet/cgeeodpfagjceefieflmdfphplkenlfk",

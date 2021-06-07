@@ -12,8 +12,8 @@ import BigNumber from "bignumber.js";
 import {HelloContract} from "./HelloContract";
 import { useState } from "react"
 import { checkExtensions, test,getCurrentExtension } from "./extensions/checkExtensions"
-import { swapB, getAllExistingPairs,swapA,setCreator,connectToPairStep2DeployWallets,getPairReserves,checkPubKey, getAllPairs,getval,getAllClientWallets,pairKeys,getDexClientData,x,getRootData,createDEXclient,connectToPair,onSharding,getGiverAddress} from "./sdk/run"
-import { subscribe,subscribeAll,getClientBalance,getAllPairsWoithoutProvider } from "./webhook/script"
+import { swapB, swapA,setCreator,connectToPairStep2DeployWallets,checkPubKey, createDEXclient,connectToPair,onSharding,} from "./sdk/run"
+import { subscribe,getVal, subscribeAll,getClientBalance,getAllPairsWoithoutProvider,getAllClientWalletsQUERY,getRootBalanceOF,getRootCreators } from "./webhook/script"
 
 // async function checkExtension() {
 //
@@ -147,21 +147,11 @@ import { subscribe,subscribeAll,getClientBalance,getAllPairsWoithoutProvider } f
 
 function App() {
 
-  async function clickMe() {
-      let y = getAllClientWallets()
-      console.log("xxx",y)
-
-}
-    async function clickMe2() {
-        let y = getRootData()
-        console.log("xxx",y)
-
-    }
     async function clickMe3() {
         let y = checkPubKey()
     }
     async function clickMe4() {
-        let y = connectToPairStep2DeployWallets()
+        let y = setCreator()
     }
     async function clickMe5() {
         let y = connectToPair()
@@ -172,51 +162,33 @@ function App() {
     async function clickMe7() {
         let y = swapA()
     }
-
-    async function clickMe8() {
-        let y = getPairReserves()
-    }
-    async function clickMe9() {
-        let y = getAllPairs()
-    }
     async function clickMe10() {
         let y = setCreator()
     }
     async function clickMe11() {
-        let y = getval()
+        let y = getVal()
     }
     async function clickMe12() {
         let y = getAllPairsWoithoutProvider()
     }
     async function clickMe13() {
-        let y = getClientBalance()
+        // let y = getClientBalance()
+        let y = await getRootCreators()
+        let x = await getRootBalanceOF()
+
     }
     async function clickMe14() {
-        let y = subscribeAll()
+        let y = getAllClientWalletsQUERY()
     }
     async function clickMe15() {
-        let y = getAllExistingPairs()
+        let y = getClientBalance()
     }
+
 
 
   return (
       <div className="App">
-        <button
-            style={{
-          "width": "500px",
-          "height": "200px",
-             }}
-                onClick={()=>clickMe()}>
-            getAllClientWallets
-        </button>
-          <button
-              style={{
-                  "width": "500px",
-                  "height": "200px",
-              }}
-              onClick={()=>clickMe2()}>
-              getRootData
-          </button>
+
           <button
               style={{
                   "width": "500px",
@@ -231,7 +203,7 @@ function App() {
                   "height": "200px",
               }}
               onClick={()=>clickMe4()}>
-              connectToPairStep2DeployWallets
+              setCreator
           </button>
 
           <button
@@ -258,22 +230,6 @@ function App() {
               }}
               onClick={()=>clickMe7()}>
               swapA
-          </button>
-          <button
-              style={{
-                  "width": "500px",
-                  "height": "200px",
-              }}
-              onClick={()=>clickMe8()}>
-              getPairReserves
-          </button>
-          <button
-              style={{
-                  "width": "500px",
-                  "height": "200px",
-              }}
-              onClick={()=>clickMe9()}>
-              getAllPairs
           </button>
           <button
               style={{
@@ -307,7 +263,7 @@ function App() {
                   "height": "200px",
               }}
               onClick={()=>clickMe13()}>
-              getClientBalance
+              getRootCreators
           </button>
           <button
               style={{
@@ -315,16 +271,15 @@ function App() {
                   "height": "200px",
               }}
               onClick={()=>clickMe14()}>
-              subscribeAl
+              getAllClientWalletsQUERY
           </button>
-
           <button
               style={{
                   "width": "500px",
                   "height": "200px",
               }}
               onClick={()=>clickMe15()}>
-              getAllExistingPairs
+              getClientBalance
           </button>
 
       </div>
