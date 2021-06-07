@@ -96,12 +96,6 @@ export async function getRootBalanceOF() {
     }
 }
 
-
-export async function getVal() {
-    let wallets = ["0:7989eca10176e02b9355c5492692e699163b9a7620e28d32e392f9c93ef5f14e","0:755969bb687ff72fd516d957a9e66923d5ffead0f57054155e8b98c5c0ab76d1"]
-    wallets.map(item=>console.log(getWalletBalanceQUERY(item)))
-}
-
 export async function getWalletBalanceQUERY(walletAddress) {
     try {
         const curWalletContract = new Account(TONTokenWalletContract, {address:walletAddress, client});
@@ -135,8 +129,6 @@ export async function getAllClientWalletsQUERY(clientAddress) {
 
     const acc = new Account(DEXclientContract, {address: clientAddress, client});
     const response = await acc.runLocal("rootWallet", {});
-    // const response2 = await acc.runLocal("getAllDataPreparation", {});
-    // console.log("response2",response2.decoded.output)
     let normlizeWallets = []
 try {
     for (const item of Object.entries(response.decoded.output.rootWallet)) {
@@ -229,7 +221,7 @@ const decode = {
         try {
             const decodedMessage = (
                 await TonClient.default.abi.decode_message({
-                    abi: abiContract(abi),  //DEXclientContract.abi RootTokenContract 60ae82cc933c9613a7a9e531129a66195390edd61d8f5b77224893cea003021e
+                    abi: abiContract(abi),
                     message: boc,
                 })
             )
@@ -246,59 +238,6 @@ export async function subscribeAll() {
     let wallets = ["0:7823d7b9083c54a9176509b294386f020106dc6e53e77970d6726d7da97bc857","0:7e0457591e59add970bfa95c87d8b1d6c13e0677411c93c057a1706184e9b6ab"]
     wallets.map(item=>subscribe(item))
 };
-
-
-// export async function subscribe(address) {
-//     let subscribeID = (await client.net.subscribe_collection({
-//         collection: "messages",
-//         filter: {
-//             dst: { eq: address },
-//         },
-//         result: "id boc created_at",
-//
-//     }, async (params,responseType) => {
-//          if (responseType === ResponseType.Custom) {
-//
-//              let decoded = await decode.message(DEXrootContract.abi, params.result.boc)
-//              if (decoded === 304) {decoded = await decode.message(RootTokenContract.abi, params.result.boc)}
-//              if (decoded === 304) {decoded = await decode.message(TONTokenWalletContract.abi, params.result.boc)}
-//              if (decoded === 304) {decoded = await decode.message(SafeMultisigWallet.abi, params.result.boc)}
-//              if (decoded === 304) {decoded = await decode.message(DEXPairContract.abi, params.result.boc)}
-//              if (decoded === 304) {decoded = await decode.message(DEXclientContract.abi, params.result.boc)}
-//
-//              let resInput = decoded.value
-//
-//              if(resInput.grams){
-//                  console.log("skip message")
-//              }else{
-//                  let dataFromSu = {transactionID:params.result.id, "created_at":params.result.created_at, amountOfTokens: resInput.tokens, grams:resInput.grams,}
-//                  let caseID = checkMessagesAmount({id:params.result.id, data:dataFromSu})
-//                  if(caseID){
-//                      checkerArr = [];
-// //TODO get data from here
-//                      console.log("ffffff",caseID)
-//                  }
-//              }
-//         }
-//     })).handle;
-//     console.log({"subID":subscribeID,"address":address})
-// }
-//
-// let checkerArr = [];
-// let checkMessagesAmount = function(messageID){
-//     checkerArr.push(messageID)
-//     // console.log("checkerArr at checkMessagesAmount",checkerArr)
-//     if(checkerArr.length === 2){
-//         if(checkerArr[0].id === checkerArr[1].id){
-//             return checkerArr[0]
-//         }else{
-//             return checkerArr[0]
-//         }
-//     }
-//     return false
-// }
-
-
 
 export async function subscribe(address) {
 // let address = "0:7e0457591e59add970bfa95c87d8b1d6c13e0677411c93c057a1706184e9b6ab"
@@ -319,11 +258,12 @@ export async function subscribe(address) {
             if (decoded === 304) {decoded = await decode.message(SafeMultisigWallet.abi, params.result.boc)}
             if (decoded === 304) {decoded = await decode.message(DEXPairContract.abi, params.result.boc)}
             if (decoded === 304) {decoded = await decode.message(DEXclientContract.abi, params.result.boc)}
-//
+
 // console.log("params.result.id", params.result.id)
 // console.log("created_at_string", params.result.created_at)
             let resInput = decoded.value
             let caseID = await checkMessagesAmount({transactionID:params.result.id, "created_at":params.result.created_at, amountOfTokens: resInput.tokens, grams:resInput.grams,})
+      //TODO get webhook data here
              console.log("caseID",caseID)
             // await chek(caseID)
         }
